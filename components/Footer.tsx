@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
 
 export default function Footer() {
   const [year, setYear] = useState("");
@@ -13,20 +12,20 @@ export default function Footer() {
     setYear(new Date().getFullYear().toString());
   }, []);
 
-  // Animation variants for staggered reveal
-  const containerVariants Variants= {
+  // Animation variants for staggered reveal (fixed syntax with as const)
+  const containerVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.1 }
     }
-  };
+  } as const;
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-  };
+  } as const;
 
   return (
     <footer className="w-full relative border-t border-white/10 bg-neutral-950 pt-20 pb-10 overflow-hidden mt-auto z-10">
