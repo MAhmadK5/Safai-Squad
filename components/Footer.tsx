@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, Variants } from "framer-motion";
 
 export default function Footer() {
   const [year, setYear] = useState("");
@@ -13,7 +14,7 @@ export default function Footer() {
   }, []);
 
   // Animation variants for staggered reveal
-  const containerVariants = {
+  const containerVariants Variants= {
     hidden: { opacity: 0, y: 30 },
     visible: { 
       opacity: 1, 
