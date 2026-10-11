@@ -104,7 +104,7 @@ export default function Footer() {
             </p>
             
             <a 
-              href="https://instagram.com/safaisquad" 
+              href="https://instagram.com/safaisquad.isb" 
               target="_blank" 
               rel="noopener noreferrer"
               className="group relative inline-flex items-center justify-center gap-3 px-6 py-3 rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:border-emerald-500/50 transition-all duration-300 overflow-hidden"

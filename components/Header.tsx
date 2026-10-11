@@ -137,7 +137,7 @@ export default function Header() {
             <div className="mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col gap-4">
               <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest">Connect</p>
               <a 
-                href="https://instagram.com/safaisquad" 
+                href="https://instagram.com/safaisquad.isb" 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="inline-flex items-center justify-between w-full p-4 rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-white font-bold uppercase tracking-widest text-sm active:scale-95 transition-transform"
