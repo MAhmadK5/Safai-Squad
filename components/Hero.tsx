@@ -1,113 +1,182 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default function Hero() {
-  return (
-    <section className="relative pt-32 lg:pt-40 pb-20 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 overflow-hidden w-full">
-      
-      {/* Background ambient glow effect */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-900/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+  const [transformation, setTransformation] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [sliderPosition, setSliderPosition] = useState(50); // Slider split percentage
+  const containerRef = useRef<HTMLDivElement>(null);
 
-      {/* Left Column: Text & Event Card */}
+  // Fetch the latest comparison from Supabase
+  useEffect(() => {
+    async function fetchTransformation() {
+      const { data, error } = await supabase
+        .from("hero_transformation")
+        .select("*")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (!error && data) {
+        setTransformation(data);
+      }
+      setLoading(false);
+    }
+
+    fetchTransformation();
+  }, []);
+
+  // Fallback defaults in case Supabase table is not populated yet
+  const activeTransform = transformation || {
+    location_name: "Margalla Hills (Trail 3)",
+    before_image_url: "https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?q=80&w=1200&auto=format&fit=crop",
+    after_image_url: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1200&auto=format&fit=crop",
+    impact_desc: "Cleared dozens of trash bags from high-frequency paths to restore natural beauty."
+  };
+
+  // Drag and hover calculations for before/after slider
+  const handleMove = (clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setSliderPosition(percentage);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches[0]) handleMove(e.touches[0].clientX);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (e.buttons === 1) handleMove(e.clientX); // Left click & drag
+  };
+
+  return (
+    <section className="relative min-h-[90vh] pt-32 lg:pt-40 pb-20 px-6 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 overflow-hidden w-full transition-colors duration-300">
+      
+      {/* Background Animated Gradient Orbs */}
+      <div className="absolute top-1/4 -left-20 w-[400px] h-[400px] bg-emerald-400/10 dark:bg-emerald-900/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-emerald-500/5 dark:bg-emerald-800/10 rounded-full blur-[140px] -z-10 pointer-events-none" />
+
+      {/* Left Column: Mission Overview & Statistics */}
       <motion.div 
-        className="w-full lg:w-1/2 flex flex-col items-start text-left"
+        className="w-full lg:w-5/12 flex flex-col items-start text-left z-10"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.8 }}
       >
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1]">
-          A cleaner, greener <br />
-          <span className="text-emerald-500 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-600">
-            tomorrow.
+        {/* Pulsing Team Active Badge */}
+        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-neutral-100 dark:bg-neutral-900/60 backdrop-blur-md border border-neutral-200 dark:border-neutral-800 shadow-sm mb-8">
+          <span className="relative flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+          </span>
+          <span className="text-xs font-bold uppercase tracking-widest text-neutral-800 dark:text-neutral-300">
+            Active on the Ground
+          </span>
+        </div>
+
+        {/* Dynamic Title Overlay */}
+        <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tighter mb-6 leading-[0.95] text-neutral-950 dark:text-white">
+          <span className="block">Restore.</span>
+          <span className="block text-neutral-400 dark:text-neutral-600">Reclaim.</span>
+          <span className="block text-emerald-500 bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-emerald-700 dark:from-emerald-400 dark:to-emerald-600">
+            Rebuild.
           </span>
         </h1>
-        <p className="text-lg md:text-xl text-neutral-400 max-w-lg mb-10">
-          Youth in action. Zero waste. Maximum impact. We are a community-led force dedicated to tackling Islamabad's waste crisis head-on.
+        
+        <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-md mb-10 font-medium leading-relaxed">
+          Action over words. Zero waste. Maximum impact. We are a dedicated squad tackling Islamabad's waste crisis head-on, transforming spaces one location at a time.
         </p>
 
-        {/* Glassmorphism Highlight Card */}
-        <div className="relative p-[1px] rounded-2xl bg-gradient-to-br from-emerald-500/30 to-neutral-800 w-full max-w-md">
-          <div className="bg-neutral-900/80 backdrop-blur-xl rounded-2xl p-6 md:p-8 flex flex-col items-start border border-white/5 shadow-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4 border border-emerald-500/20">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              Upcoming Event
-            </div>
-            <h2 className="text-2xl font-black mb-2 text-white">Islamabad Cleanup Drive</h2>
-            <p className="text-neutral-400 mb-6 text-sm leading-relaxed">
-              Gear up and step out. It's time to reclaim our streets. No more overflowing trash—just community power in action.
-            </p>
-            <Link
-              href="/register" 
-              className="w-full py-3.5 bg-white text-neutral-950 hover:bg-neutral-200 transition-colors rounded-xl font-bold text-center shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-            >
-              Volunteer Now
-            </Link>
-          </div>
+        {/* Location Badge & Short Impact Highlight Card */}
+        <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-neutral-900/80 border border-neutral-200 dark:border-neutral-800/80 shadow-md w-full max-w-md">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-1">
+            Featured Target Location
+          </span>
+          <h2 className="text-2xl font-black text-neutral-950 dark:text-white mb-2">
+            {activeTransform.location_name}
+          </h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed mb-0">
+            {activeTransform.impact_desc}
+          </p>
         </div>
       </motion.div>
 
-      {/* Right Column: Hero Image & Badges */}
+      {/* Right Column: Interactive Slide before/after Comparison Carousel */}
       <motion.div 
-        className="w-full lg:w-1/2 relative"
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        className="w-full lg:w-7/12 flex items-center justify-center lg:justify-end"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
       >
-        {/* Glow behind image */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-600/20 to-transparent blur-3xl rounded-full transform translate-x-10 translate-y-10"></div>
-        
-        {/* Main Image Container */}
-        <div className="relative w-full aspect-[4/5] md:aspect-[1/1] lg:aspect-[4/5] rounded-[2rem] overflow-hidden border border-neutral-800 shadow-2xl bg-neutral-900">
-          {/* Replace '/hero.jpg' with your actual image file in the public folder */}
-          <Image 
-            src="/hero.jpg" 
-            alt="Safai Squad cleaning in action"
-            fill
-            className="object-cover hover:scale-105 transition-transform duration-700 ease-out opacity-80 hover:opacity-100"
-            priority
-          />
-          {/* Gradient overlay to ensure image blends well with dark theme */}
-          <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent pointer-events-none"></div>
-        </div>
+        {loading ? (
+          <div className="w-full max-w-[550px] aspect-[4/5] rounded-[2.5rem] bg-neutral-200 dark:bg-neutral-900 animate-pulse flex items-center justify-center border border-neutral-300 dark:border-neutral-800">
+            <span className="w-10 h-10 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></span>
+          </div>
+        ) : (
+          <div 
+            ref={containerRef}
+            className="relative w-full max-w-[550px] aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-neutral-300 dark:border-neutral-800 shadow-2xl bg-neutral-100 dark:bg-neutral-900 select-none cursor-ew-resize"
+            onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove}
+            onMouseDown={(e) => handleMove(e.clientX)}
+          >
+            {/* 1. After Image (Background) */}
+            <div className="absolute inset-0">
+              <Image 
+                src={activeTransform.after_image_url} 
+                alt="Restored location (After)"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute bottom-6 right-6 bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-md z-10">
+                After
+              </div>
+            </div>
 
-        {/* Floating Badge 1 - Top Left */}
-        <motion.div 
-          className="absolute -top-6 -left-6 md:top-10 md:-left-10 bg-neutral-800/90 backdrop-blur-md border border-neutral-700 p-4 rounded-2xl shadow-xl flex items-center gap-3"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-            🌱
-          </div>
-          <div>
-            <p className="text-xs text-neutral-400 font-medium">Community Impact</p>
-            <p className="text-white font-black">Zero Waste Goal</p>
-          </div>
-        </motion.div>
+            {/* 2. Before Image (Foregorund/Slide Overlay) */}
+            <div 
+              className="absolute inset-y-0 left-0 overflow-hidden" 
+              style={{ width: `${sliderPosition}%` }}
+            >
+              {/* Outer box holds the exact width as the parent so sliding is smooth */}
+              <div className="absolute inset-y-0 left-0 w-[550px] aspect-[4/5]" style={{ width: containerRef.current?.offsetWidth || "550px" }}>
+                <Image 
+                  src={activeTransform.before_image_url} 
+                  alt="Damaged area (Before)"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute bottom-6 left-6 bg-neutral-900 text-white font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-md z-10">
+                  Before
+                </div>
+              </div>
+            </div>
 
-        {/* Floating Badge 2 - Bottom Right */}
-        <motion.div 
-          className="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-neutral-800/90 backdrop-blur-md border border-neutral-700 p-4 rounded-2xl shadow-xl flex items-center gap-3"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        >
-          <div className="flex -space-x-2">
-            <div className="w-8 h-8 rounded-full bg-neutral-600 border-2 border-neutral-800"></div>
-            <div className="w-8 h-8 rounded-full bg-neutral-500 border-2 border-neutral-800"></div>
-            <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-neutral-800 flex items-center justify-center text-[10px] font-bold text-white">+50</div>
-          </div>
-          <div>
-            <p className="text-white font-black text-sm">Volunteers</p>
-            <p className="text-xs text-emerald-400 font-medium">Already joined</p>
-          </div>
-        </motion.div>
+            {/* 3. Slider Drag Handle line */}
+            <div 
+              className="absolute inset-y-0 w-1 bg-white hover:bg-emerald-400 cursor-ew-resize transition-colors shadow-2xl flex items-center justify-center z-20"
+              style={{ left: `${sliderPosition}%` }}
+            >
+              {/* Central handle knob */}
+              <div className="w-8 h-8 rounded-full bg-white text-emerald-600 shadow-xl border-2 border-emerald-500 hover:scale-115 transition-transform flex items-center justify-center font-bold text-sm pointer-events-none">
+                ↔
+              </div>
+            </div>
 
+            {/* Dynamic UI Label Instructions */}
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-neutral-950/80 backdrop-blur-md rounded-full shadow-lg border border-white/10 text-white text-[10px] font-bold uppercase tracking-widest">
+              Drag Knob to Compare
+            </div>
+          </div>
+        )}
       </motion.div>
     </section>
   );

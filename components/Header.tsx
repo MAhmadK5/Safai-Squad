@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle"; 
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,89 +17,67 @@ export default function Header() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 transition-all"
-    >
-      <motion.nav
-        layout
-        className={`flex items-center justify-between w-full max-w-7xl transition-all duration-300 ${
+    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 pointer-events-none">
+      {/* 
+        The nav container itself is pointer-events-auto so we can click it, 
+        but the invisible header wrapper doesn't block clicks on the page below. 
+      */}
+      <nav
+        className={`pointer-events-auto flex items-center justify-between w-full max-w-7xl transition-all duration-500 ease-out ${
           isScrolled
-            ? "px-6 py-3 bg-neutral-900/60 backdrop-blur-xl border border-white/10 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
-            : "px-2 py-2 bg-transparent"
+            ? "px-6 py-3 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-xl border border-neutral-200/80 dark:border-neutral-800/80 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.7)] rounded-full ring-1 ring-white/50 dark:ring-white/10"
+            : "px-2 py-3 bg-transparent border border-transparent rounded-full"
         }`}
       >
-        {/* Animated Logo Section - Now links to Home */}
+        {/* Logo Section */}
         <Link href="/">
-          <motion.div 
-            className="flex items-center gap-4 cursor-pointer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {/* Static, perfect circle logo container */}
-            <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-[0_0_15px_rgba(16,185,129,0.4)] border-2 border-transparent hover:border-emerald-500/50 transition-colors duration-300">
+          <div className="flex items-center gap-3 cursor-pointer group hover:scale-105 active:scale-95 transition-transform duration-300">
+            <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-[0_0_20px_rgba(16,185,129,0.15)] dark:shadow-[0_0_25px_rgba(16,185,129,0.3)] border border-neutral-100 dark:border-neutral-800 group-hover:border-emerald-400/50 transition-colors duration-500 z-10">
               <Image 
                 src="/logo.png" 
                 alt="Safai Squad Logo" 
                 width={56} 
                 height={56}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-out"
                 priority
               />
             </div>
             
-            {/* Maximum Font Styling */}
-            <span className="text-2xl md:text-3xl font-black tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-white via-neutral-100 to-neutral-400 drop-shadow-lg">
-              SAFAI SQUAD
-            </span>
-          </motion.div>
+            <div className="flex items-center -ml-1 md:ml-1">
+              <span className="text-2xl md:text-3xl font-black tracking-[0.15em] text-neutral-900 dark:text-white drop-shadow-sm">
+                SAFAI
+              </span>
+              <span className="text-2xl md:text-3xl font-light tracking-[0.15em] bg-clip-text text-transparent bg-gradient-to-r from-emerald-500 to-emerald-300 drop-shadow-[0_0_10px_rgba(16,185,129,0.2)] ml-1">
+                SQUAD
+              </span>
+            </div>
+          </div>
         </Link>
 
-{/* Hover-animated Nav Links (Visible on desktop) */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-bold text-neutral-300 tracking-wide">
+        {/* Nav Links */}
+        <div className="hidden md:flex items-center gap-8 lg:gap-10 text-[13px] font-bold text-neutral-500 dark:text-neutral-400 tracking-[0.1em]">
           {[
             { name: "Mission", path: "/mission" },
             { name: "Our Story", path: "/our-story" },
-            { name: "Events", path: "/events" },
-            { name: "Impact", path: "/impact" }
+            { name: "The Team", path: "/team" },
+           { name: "BLOGS", path: "/campaigns" },
+            { name: "Gallery", path: "/gallery" }
           ].map((item) => (
             <Link key={item.name} href={item.path}>
-              <motion.div
-                className="relative group px-1 py-2 uppercase cursor-pointer"
-                whileHover={{ y: -2, color: "#fff" }}
-                transition={{ duration: 0.2 }}
-              >
+              <div className="relative group px-1 py-2 uppercase cursor-pointer hover:text-neutral-950 dark:hover:text-white transition-colors duration-300">
                 {item.name}
-                <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-emerald-500 transition-all duration-300 ease-out group-hover:w-full rounded-full"></span>
-              </motion.div>
+                {/* Sleek expanding underline instead of a dot */}
+                <span className="absolute left-0 -bottom-0.5 w-full h-[2px] bg-gradient-to-r from-emerald-400 to-emerald-600 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out shadow-[0_0_10px_rgba(16,185,129,0.5)] rounded-full"></span>
+              </div>
             </Link>
           ))}
         </div>
 
-        {/* Pulsing CTA Button - Now links to Events page */}
-        <Link href="/events">
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            animate={{ 
-              boxShadow: [
-                "0px 0px 0px 0px rgba(16,185,129,0)", 
-                "0px 0px 20px 4px rgba(16,185,129,0.5)", 
-                "0px 0px 0px 0px rgba(16,185,129,0)"
-              ] 
-            }}
-            transition={{ 
-              boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
-              scale: { duration: 0.2 }
-            }}
-            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 transition-colors rounded-full font-black uppercase tracking-wider text-sm text-white shadow-lg cursor-pointer inline-block"
-          >
-            Join the Force
-          </motion.div>
-        </Link>
-      </motion.nav>
-    </motion.header>
+        {/* Action Buttons Wrapper */}
+        <div className="flex items-center gap-4 pl-4 md:pl-0 border-l border-transparent md:border-neutral-200/50 md:dark:border-neutral-800/50 md:ml-4 md:pl-6 transition-colors duration-500">
+          <ThemeToggle />
+        </div>
+      </nav>
+    </header>
   );
 }

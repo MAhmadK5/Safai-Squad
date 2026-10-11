@@ -1,15 +1,19 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import Gallery from "@/components/Gallery";
+import TeamPreview from "@/components/TeamPreview";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-neutral-950 text-neutral-50 font-sans selection:bg-emerald-500 selection:text-white flex flex-col">
-      <Header />
+    <main className="py-24 transition-colors duration-500 relative overflow-hidden">
+<Header/>
       <div className="flex-grow flex items-center justify-center">
-        <Hero />
+<Hero/>
       </div>
-      <Footer />
+<Gallery/>
+<TeamPreview />
+<Footer/>
     </main>
   );
 }
