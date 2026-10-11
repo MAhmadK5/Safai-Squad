@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, Variants } from "framer-motion"; // <-- Added Variants import
+import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,18 +13,18 @@ export default function Footer() {
     setYear(new Date().getFullYear().toString());
   }, []);
 
-  // Explicitly typed as Variants to fix the Vercel build error
+  // Using 'as const' forces TypeScript to accept the specific ease string
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1, 
-      transition: { duration: 0.8, ease: "easeOut", staggerChildren: 0.1 }
+      transition: { duration: 0.8, ease: "easeOut" as const, staggerChildren: 0.1 }
     }
   };
 
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } }
   };
 
   return (
@@ -103,7 +104,7 @@ export default function Footer() {
             </p>
             
             <a 
-              href="https://instagram.com/safaisquad.isb" 
+              href="https://instagram.com/safaisquad" 
               target="_blank" 
               rel="noopener noreferrer"
               className="group relative inline-flex items-center justify-center gap-3 px-6 py-3 rounded-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:border-emerald-500/50 transition-all duration-300 overflow-hidden"
@@ -141,7 +142,7 @@ export default function Footer() {
           <p className="flex items-center gap-1.5 flex-wrap justify-center">
             BUILT BY
             <a 
-              href= "https://www.linkedin.com/in/m-ahmad-khalid-bb0514377/?isSelfProfile=true"  
+              href= "https://www.linkedin.com/in/m-ahmad-khalid-bb0514377/?isSelfProfile=true" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-neutral-900 dark:text-neutral-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors duration-300"
