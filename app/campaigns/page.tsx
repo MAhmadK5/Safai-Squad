@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion"; // <-- Added Variants import
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -11,11 +11,11 @@ export default function ImpactAndBlogs() {
   const posts = [
     {
       id: 1,
-      title: "Szabist Cafeteria",
-      excerpt: "Our biggest operation yet. See how 2 volunteers restored one of Islamabad's most iconic cafe over a single shot.",
+      title: "Margalla Hills Trail 3: 500kg of Plastic Removed",
+      excerpt: "Our biggest operation yet. See how 40 volunteers restored one of Islamabad's most iconic hiking trails over a single weekend.",
       date: "Oct 10, 2026",
       category: "Field Report",
-      image: "https://cvyusdvemnxirrtehxoo.supabase.co/storage/v1/object/public/CAMPAIGNS/Cam1.png",
+      image: "https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?q=80&w=1200&auto=format&fit=crop",
       readTime: "4 min read"
     },
     {
@@ -38,7 +38,8 @@ export default function ImpactAndBlogs() {
     }
   ];
 
-  const containerVariants = {
+  // Added Variants typing here
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -46,9 +47,10 @@ export default function ImpactAndBlogs() {
     }
   };
 
-  const itemVariants = {
+  // Added Variants typing and 'as const' here
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
   };
 
   return (
